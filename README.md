@@ -1,0 +1,268 @@
+[JoshFurnished_Interface.html](https://github.com/user-attachments/files/22990677/JoshFurnished_Interface.html)
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>JoshFurnished | Login + Main Interface + User Logs</title>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src='https://kit.fontawesome.com/9d1a3267eb.js' crossorigin='anonymous'></script>
+<style>
+/* ---------- GLOBAL ---------- */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+body {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  background: #f0f2f5;
+  color: #333;
+}
+.hidden { display: none; }
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+/* ---------- LOGIN ---------- */
+#login-section {
+  background: white;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  text-align: center;
+  width: 300px;
+}
+#login-section h2 {
+  margin-bottom: 20px;
+}
+#login-section input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+}
+#login-btn, #register-btn {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  border: none;
+  border-radius: 10px;
+  background: #4CAF50;
+  color: white;
+  cursor: pointer;
+  transition: 0.3s;
+}
+#register-btn { background: #2196F3; }
+#login-btn:hover { background: #45a049; }
+#register-btn:hover { background: #0b7dda; }
+/* ---------- MAIN INTERFACE ---------- */
+#main-interface {
+  display: none;
+  height: 100vh;
+}
+.sidebar {
+  width: 220px;
+  background: #2C3E50;
+  color: white;
+  position: fixed;
+  top: 0; bottom: 0; left: 0;
+  padding: 20px;
+  box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+}
+.sidebar h2 { text-align: center; margin-bottom: 30px; }
+.sidebar button {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+  border: none;
+  background: #34495E;
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.sidebar button:hover { background: #1ABC9C; }
+.content {
+  margin-left: 240px;
+  padding: 40px;
+}
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.topbar button {
+  background: #E74C3C;
+  border: none;
+  color: white;
+  padding: 8px 15px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+/* ---------- MODALS ---------- */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5);
+  justify-content: center;
+  align-items: center;
+}
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 15px;
+  width: 400px;
+  text-align: center;
+}
+.modal-content h3 { margin-top: 0; }
+.close-btn {
+  background: #E74C3C;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.delete-user, .delete-inv {
+  background: #E74C3C;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 3px 6px;
+}
+</style>
+</head>
+<body>
+<div id="login-section" class="center">
+  <div>
+    <h2>Login</h2>
+    <input type="text" id="username" placeholder="Username">
+    <input type="password" id="password" placeholder="Password">
+    <button id="login-btn">Login</button>
+    <button id="register-btn">Register</button>
+  </div>
+</div>
+<div id="main-interface">
+  <div class="sidebar">
+    <h2><i class="fa-solid fa-box"></i> JoshFurnished</h2>
+    <button id="start-btn"><i class="fa-solid fa-play"></i> Start</button>
+    <button id="stop-btn"><i class="fa-solid fa-stop"></i> Stop</button>
+    <button id="speed-btn"><i class="fa-solid fa-gauge-high"></i> Speed Calibration</button>
+    <button id="order-btn"><i class="fa-solid fa-boxes-stacked"></i> Inventory</button>
+    <button id="logs-btn"><i class="fa-solid fa-clipboard-list"></i> User Logs</button>
+  </div>
+  <div class="content">
+    <div class="topbar">
+      <h2>Welcome, <span id="user-display"></span></h2>
+      <button id="logout-btn"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+    </div>
+    <div id="dashboard"><h3>System Dashboard</h3><p>Monitor system functions here.</p></div>
+  </div>
+</div>
+<div id="user-logs-modal" class="modal">
+  <div class="modal-content">
+    <h3>User Logs</h3>
+    <div id="logs-list"></div>
+    <button id="close-logs" class="close-btn">Close</button>
+  </div>
+</div>
+<div id="inventory-modal" class="modal">
+  <div class="modal-content">
+    <h3>Feed Inventory</h3>
+    <select id="item-select">
+      <option value="">Select item</option>
+      <option value="Feed A">Feed A</option>
+      <option value="Feed B">Feed B</option>
+      <option value="Feed C">Feed C</option>
+    </select>
+    <button id="add-item">Add to Inventory</button>
+    <div id="inventory-list" style="margin-top:15px;text-align:left;"></div>
+    <button id="close-inv" class="close-btn">Close</button>
+  </div>
+</div>
+<script>
+$(document).ready(function(){
+  // Register
+  $("#register-btn").click(function(){
+    const user=$("#username").val();
+    const pass=$("#password").val();
+    if(user && pass){
+      localStorage.setItem(user, pass);
+      alert("Account registered!");
+    } else alert("Please fill all fields.");
+  });
+
+  // Login
+  $("#login-btn").click(function(){
+    const user=$("#username").val();
+    const pass=$("#password").val();
+    if(localStorage.getItem(user)===pass){
+      $("#login-section").hide();
+      $("#main-interface").fadeIn();
+      $("#user-display").text(user);
+      let logs=JSON.parse(localStorage.getItem("userLogs"))||[];
+      logs.push({ user:user, action:"Login", time:new Date().toLocaleString() });
+      localStorage.setItem("userLogs", JSON.stringify(logs));
+    } else alert("Invalid credentials.");
+  });
+
+  // Logs
+  $("#logs-btn").click(function(){
+    let logs=JSON.parse(localStorage.getItem("userLogs"))||[];
+    let html="";
+    if(logs.length===0) html="<p>No logs yet.</p>";
+    else logs.forEach((l,i)=>{
+      html+=`<p>${l.user} — ${l.action} at ${l.time} <button class='delete-user' data-index='${i}'>Delete</button></p>`;
+    });
+    $("#logs-list").html(html);
+    $("#user-logs-modal").fadeIn();
+  });
+
+  $(document).on("click",".delete-user", function(){
+    let idx=$(this).data("index");
+    let logs=JSON.parse(localStorage.getItem("userLogs"))||[];
+    logs.splice(idx,1);
+    localStorage.setItem("userLogs", JSON.stringify(logs));
+    $(this).parent().remove();
+    alert("The user is removed");
+  });
+
+  $("#close-logs").click(function(){ $("#user-logs-modal").fadeOut(); });
+  $("#logout-btn").click(function(){ $("#main-interface").hide(); $("#login-section").fadeIn(); });
+  $("#order-btn").click(function(){
+    $("#inventory-modal").fadeIn();
+    renderInventory();
+  });
+  $("#close-inv").click(function(){ $("#inventory-modal").fadeOut(); });
+  $("#add-item").click(function(){
+    const item=$("#item-select").val();
+    if(item){
+      let inventory=JSON.parse(localStorage.getItem("inventory"))||[];
+      inventory.push({ name:item, time:new Date().toLocaleString() });
+      localStorage.setItem("inventory", JSON.stringify(inventory));
+      renderInventory();
+    } else alert("Please select an item.");
+  });
+  function renderInventory(){
+    let inventory=JSON.parse(localStorage.getItem("inventory"))||[];
+    let html="";
+    if(inventory.length===0) html="<p>No orders yet.</p>";
+    else inventory.forEach((item,i)=>{
+      html+=`<p>${item.name} — <small>${item.time}</small> <button class='delete-inv' data-index='${i}'>Delete</button></p>`;
+    });
+    $("#inventory-list").html(html);
+  }
+  $(document).on("click",".delete-inv", function(){
+    let idx=$(this).data("index");
+    let inventory=JSON.parse(localStorage.getItem("inventory"))||[];
+    inventory.splice(idx,1);
+    localStorage.setItem("inventory", JSON.stringify(inventory));
+    $(this).parent().remove();
+    alert("The item is removed");
+  });
+});
+</script>
+</body>
+</html>
